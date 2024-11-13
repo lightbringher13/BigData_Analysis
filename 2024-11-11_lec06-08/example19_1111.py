@@ -16,7 +16,7 @@ import pandas as pd
 # emp["hire_year"] = emp["hiredate"].dt.year
 # print(emp)
 
-# add 'hire_year" series and mean_sum per year
+# add 'hire_year" series and mean_sal per year
 # emp = pd.read_csv("../data/emp.csv")
 # emp["hiredate"] = pd.to_datetime(emp["hiredate"])
 # emp['hire_year'] = emp["hiredate"].dt.year
@@ -24,7 +24,7 @@ import pandas as pd
 # emp = emp.rename(columns={"sal": "sal_mean"})
 # print(emp)
 
-# add 'hire_year" series and mean_sum per year ascending order
+# add 'hire_year" series and mean_sal per year ascending order
 # emp = pd.read_csv("../data/emp.csv")
 # emp["hiredate"] = pd.to_datetime(emp["hiredate"])
 # emp['hire_year'] = emp["hiredate"].dt.year

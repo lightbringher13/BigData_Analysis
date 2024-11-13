@@ -15,7 +15,7 @@ import pandas as pd
 # emp = pd.read_csv("data/emp.csv")
 # print(emp[emp["job"] == "SALESMAN"]['sal'].max())
 
-# find max for each job
+# find max sal for each job
 # emp = pd.read_csv("data/emp.csv")
 # print(emp.groupby("job")['sal'].max().reset_index())
 
