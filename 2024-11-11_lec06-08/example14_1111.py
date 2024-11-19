@@ -1,7 +1,7 @@
 import pandas as pd
 import re
 
-# print ename,sal and sal should be str
+# print ename,sal and sal should be str replace "0" to "*"
 # emp = pd.read_csv("data/emp.csv")
 # emp["sal"] = emp["sal"].astype(str)
 # emp["sal_replace"] = emp["sal"].str.replace("0", "*")

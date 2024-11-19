@@ -1,12 +1,12 @@
 import pandas as pd
 
-# pivot sum of each deptno
+# pivot sal_sum of each deptno
 # emp = pd.read_csv("../data/emp.csv")
 # result = emp.pivot_table(values="sal",
 #                          columns="deptno", aggfunc="sum")
 # print(result)
 
-# pivot sum of sal_sum per job
+# pivot sum of sal per job
 # emp = pd.read_csv("../data/emp.csv")
 # result = emp.pivot_table(values="sal", columns="job", aggfunc="sum")
 # print(result)

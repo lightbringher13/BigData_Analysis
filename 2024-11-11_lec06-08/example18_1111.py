@@ -1,6 +1,6 @@
 import pandas as pd
 
-# print deptno  and sum per deptno
+# print deptno  and sal_sum per deptno
 # emp = pd.read_csv("../data/emp.csv")
 # emp = emp.groupby("deptno", as_index=False)["sal"].sum()
 # emp = emp.rename(columns={"sal": "sal_sum"})

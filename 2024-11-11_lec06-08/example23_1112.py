@@ -22,7 +22,7 @@ import pandas as pd
 # age_mean = tit["Age"].mean()
 # tit["Age"].fillna(round(age_mean),i)
 
-# print age and rank descending order
+# print Age,rank,Age_grade descending order
 tit = pd.read_csv("../data/train.csv")
 age_mean = round(tit["Age"].mean())
 print(age_mean)

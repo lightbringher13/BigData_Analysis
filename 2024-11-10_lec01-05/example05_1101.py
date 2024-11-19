@@ -1,6 +1,6 @@
 import pandas as pd
 
-# sort the collumn values in ascending order
+# sort the collumn values in sal ascending order
 # emp = pd.read_csv("data/emp.csv")
 # print(emp[["ename", "sal"]].sort_values(by="sal", ascending=True))
 

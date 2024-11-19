@@ -9,7 +9,7 @@ import pandas as pd
 # left join print all deptno
 # emp = pd.read_csv("../data/emp.csv")
 # dept = pd.read_csv("../data/dept.csv")
-# result = pd.merge(emp, dept, on="deptno", how="lef")
+# result = pd.merge(emp, dept, on="deptno", how="left")
 # print(result[["ename", "loc"]])
 
 # outer join print all deptno
