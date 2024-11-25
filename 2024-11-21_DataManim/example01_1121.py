@@ -270,376 +270,356 @@ print(res)
 # # 41
 df = pd.read_csv("../data/happiness.csv")
 df.info()
-
+res = df.loc[df["행복랭킹"] == 10]["점수"].mean()
+print(res)
 
 # # 42
-# res = df.loc[df["행복랭킹"] <= 50]
-# res = res.groupby("년도")["점수"].mean()
-# print(res)
+res = df.groupby("년도").head(50).groupby("년도")["점수"].mean()
+print(res)
 
 # # 43
-# df.info()
-# res = df.loc[df["년도"] == 2018]
-# res = res[["점수", "부패에 대한인식"]].corr()
-# print(res)
+res = df.loc[df["년도"] == 2018]
+res = res[["점수", "부패에 대한인식"]].corr()
+print(res)
 
 # # 44
-# res = df.groupby(["행복랭킹", "나라명"], as_index=False).size()
-# res = res.loc[res["size"] == 2]
-# print(len(res))
+res = df.groupby(["행복랭킹", "나라명"], as_index=False).size()
+res = res.loc[res["size"] > 1]
+print(len(res))
 
 # # 45
-# res = df.loc[df["년도"] == 2019].drop("나라명", axis=1)
-# res = res.corr().unstack().reset_index().dropna()
-# res.columns = ["v1", "v2", "corr"]
-# res = res.sort_values("corr", ascending=False)
-# res = res.loc[res["v1"] != res["v2"]]
-# res = res.drop_duplicates("corr")
-# print(res.head())
+res = df.loc[df["년도"] == 2019]
+res = res.corr(numeric_only=True).unstack().reset_index()
+res.columns = ["v1", "v2", "corr"]
+res = res.loc[(res["v1"] != res["v2"]) & (res["v1"] > res["v2"])]
+res = res.sort_values("corr", ascending=False).head(5)
+print(res)
 
 # # 46
-# res = df.sort_values(["년도", "점수"]).groupby("년도").head(5)[["년도", "점수"]]
-# res = res.groupby("년도")["점수"].mean().reset_index()
-# print(res)
+res = df.groupby("년도").tail(5).groupby("년도")["점수"].mean()
+print(res)
 
 # # 47
-# over = df.loc[(df["년도"] == 2019) & (df["상대GDP"] >= df["상대GDP"].mean())]
-# under = df.loc[(df["년도"] == 2019) & (df["상대GDP"] <= df["상대GDP"].mean())]
-# over = over["점수"].mean()
-# under = under["점수"].mean()
-# res = over - under
-# print(res)
+res_over = df.loc[df["상대GDP"] >= df["상대GDP"].mean()]
+res_under = df.loc[df["상대GDP"] <= df["상대GDP"].mean()]
+res_over = res_over["점수"].mean()
+res_under = res_under["점수"].mean()
+res = res_over - res_under
+print(res)
 
 # # 48
-# res = df.sort_values(["년도", "부패에 대한인식"], ascending=[True, False]).groupby(
-#     "년도").head(20)[["년도", "부패에 대한인식"]]
-# res = res.groupby("년도")["부패에 대한인식"].mean()
-# print(res)
+res = df.sort_values(["년도", "부패에 대한인식"], ascending=[
+    True, False]).groupby("년도").head(20).groupby("년도")["부패에 대한인식"].mean()
+print(res)
 
 # # 49
-# res = df.loc[(df["행복랭킹"] <= 50) & (df["년도"] == 2018)]
-# res1 = df.loc[(df["행복랭킹"] >= 50) & (df["년도"] == 2019)]
-# ans = res.loc[res["나라명"].isin(res1["나라명"])]
-# print(len(ans))
+res_2018 = df.loc[(df["년도"] == 2018) & (df["행복랭킹"] <= 50)]
+res_2019 = df.loc[(df["년도"] == 2019) & (df["행복랭킹"] >= 50)]
+res = res_2019.loc[res_2019["나라명"].isin(res_2018["나라명"])]
+print(len(res))
 
 # # 50
-# df["size"] = df.groupby("나라명")["나라명"].transform("size")
-# res = df.loc[df["size"] >= 2]
-# res_2018 = res.loc[res["년도"] == 2018][["년도", "나라명", "점수"]].set_index("나라명")
-# res_2019 = res.loc[res["년도"] == 2019][["년도", "나라명", "점수"]].set_index("나라명")
-# res = res_2019["점수"] - res_2018["점수"]
-# res = res.reset_index()
-# res = res.sort_values("점수", ascending=False)
-# print(res)
+res = df.sort_values("나라명")[["나라명", "년도", "점수"]]
+res = res.loc[res.groupby("나라명").transform("size") > 1]
+res_2018 = res.loc[res["년도"] == 2018]
+res_2019 = res.loc[res["년도"] == 2019]
+res = res_2019
+print(res_2019)
+print(res_2018)
 
 # # 51
-# df = pd.read_csv("../data/Tetuan_City_power_consumption.csv")
-# df["DateTime"] = pd.to_datetime(df["DateTime"])
-# res = df.groupby(df["DateTime"].dt.month).size()
-# print(res)
+df = pd.read_csv("../data/Tetuan_City_power_consumption.csv")
+df["DateTime"] = pd.to_datetime(df["DateTime"])
+df["month"] = df["DateTime"].dt.month
+res = df.groupby("month").size()
+print(res)
 
 # # 52
-# df["month"] = df["DateTime"].dt.month
-# df["hour"] = df["DateTime"].dt.hour
-# res = df.loc[df["month"] == 3]
-# res["hour_temp_mean"] = res.groupby(df["hour"])[
-#     "Temperature"].transform("mean")
-# res = res.sort_values("hour_temp_mean").drop_duplicates(
-#     ["hour", "hour_temp_mean"])
-# print(res[["hour", "hour_temp_mean"]])
+df.info()
+res = df.loc[df["month"] == 3]
+res = res.groupby(df["DateTime"].dt.hour)[
+    "Temperature"].mean().sort_values(ascending=True).iloc[0]
+print(res)
+
 
 # # 53
-# res = res[["hour", "hour_temp_mean"]].sort_values(
-#     "hour_temp_mean", ascending=False)
-# print(res)
+df.info()
+res = df.loc[df["month"] == 3]
+res = res.groupby(df["DateTime"].dt.hour)[
+    "Temperature"].mean().sort_values(ascending=False).iloc[0]
+print(res)
 
 # # 54
-# res = df.loc[df["Zone 1 Power Consumption"] >
-#              df["Zone 2 Power Consumption"]]["Humidity"].mean()
-# print(res)
+df.info()
+res = df.loc[df["Zone 1 Power Consumption"] >
+             df["Zone 2 Power Consumption"]]["Humidity"].mean()
+print(res)
 
 # # 55
-# res = df[["Zone 1 Power Consumption",
-#           "Zone 2 Power Consumption", "Zone 3 Power Consumption"]].corr()
-# print(res)
+res = df[["Zone 1 Power Consumption",
+          "Zone 2 Power Consumption", "Zone 3 Power Consumption"]].corr()
+print(res)
 
 # # 56
 
-# def temp_grade(x):
-#     if x < 10:
-#         return "A"
-#     elif x < 20:
-#         return 'B'
-#     elif x < 30:
-#         return 'C'
-#     else:
-#         return 'D'
 
-# df["temp_grade"] = df["Temperature"].apply(temp_grade)
-# res = df.groupby("temp_grade").size()
-# print(res)
+def Temp_grade(x):
+    if x >= 30:
+        return "D"
+    elif x >= 20:
+        return "C"
+    elif x >= 10:
+        return "B"
+    else:
+        return "A"
+
+
+# df["Temperature"] = df["Temperature"].apply(Temp_grade)
+res = df.groupby("Temperature").size()
+print(res)
 
 # # 57
-# res = df.loc[(df["month"] == 6) & (df["hour"] == 12)]["Temperature"].std()
-# print(res)
+res = df.loc[(df["DateTime"].dt.month == 6) & (
+    df["DateTime"].dt.hour == 12)]["Temperature"].std()
+print(res)
 
 # # 58
-# res = df.loc[(df["month"] == 6) & (df["hour"] == 12)]["Temperature"].var()
-# print(res)
+res = df.loc[(df["DateTime"].dt.month == 6) & (
+    df["DateTime"].dt.hour == 12)]["Temperature"].agg(["var", "std"])
+print(res)
 
 # # 59
-# res = df.loc[df["Temperature"] >=
-#              df["Temperature"].mean()].sort_values("Temperature", ascending=True)["Humidity"].iloc[3]
-# print(res)
+res = df.loc[df["Temperature"] >=
+             df["Temperature"].mean()].sort_values("Temperature").iloc[3, 2]
+print(res)
 
 # # 60
-# res = df.loc[df["Temperature"] >=
-#              df["Temperature"].median()].sort_values("Temperature")["Humidity"].iloc[3]
-# print(res)
+res = df.loc[df["Temperature"] >=
+             df["Temperature"].median()].sort_values("Temperature").iloc[3, 2]
+print(res)
 
 # # 61
-# df = pd.read_csv("../data/pokemon.csv")
-# df.info()
-
-# Legendary_HP_mean = df.loc[df["Legendary"] == True]["HP"].mean()
-# Non_Legendary_HP_mean = df.loc[df["Legendary"] == False]["HP"].mean()
-# res = Legendary_HP_mean - Non_Legendary_HP_mean
-# print(res)
+df = pd.read_csv("../data/pokemon.csv")
+df.info()
+res = df.groupby("Legendary")["HP"].mean()
+print(res)
+res = res.loc[True] - res.loc[False]
+print(res)
 
 # # 62
-# res = df.groupby("Type 2", as_index=False).size(
-# ).sort_values("size", ascending=False)
-# print(res.iloc[0])
+res = df.groupby("Type 2").size().sort_values(ascending=False).index[0]
+print(res)
 
 # # 63
-# res = df.groupby("Type 1", as_index=False).size(
-# ).sort_values("size", ascending=False)
-# water_Attack_mean = df.loc[df["Type 1"] == "Water"]["Attack"].mean()
-# water_Defense_mean = df.loc[df["Type 1"] == "Water"]["Defense"].mean()
-# print(water_Attack_mean)
-# print(water_Defense_mean)
-# res = water_Attack_mean/water_Defense_mean
-# print(res)
+res = df.groupby("Type 1").size().sort_values(ascending=False)
+res = df.loc[df["Type 1"] == "Water", ["Attack", "Defense"]].mean()
+res = res["Attack"]/res["Defense"]
+print(res)
 
 # # 64
-# res = df.loc[df["Legendary"] == True].groupby("Generation")["Legendary"].size()
-# res = res.reset_index(name="size").sort_values("size", ascending=False)
-# print(res)
+res = df.loc[df["Legendary"] == True]
+res = res.groupby("Generation").size().sort_values(ascending=False)
+print(res.index[0])
 
 # # 65
-# res = df[["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"]].corr()
-# res = res.unstack().reset_index(name="corr")
-# res = res.loc[res["level_0"] != res["level_1"]]
-# res = res.sort_values("corr", ascending=False)
-# res = res.iloc[0]
-# print(res)
+res = df[["HP", "Attack", "Defense", "Sp. Atk",
+          "Sp. Def", "Speed"]].corr().unstack().reset_index()
+res = res.rename(columns={0: "corr"})
+res = res.loc[(res["level_0"] != res["level_1"]) &
+              (res["level_1"] > res["level_0"])]
+res = res.sort_values("corr", ascending=False).iloc[0]
+print(res)
 
 # # 66
-# res = df.sort_values(["Generation", "Attack"], ascending=[
-#                      True, True]).groupby("Generation").head(3)
-# res = res["Attack"].mean()
-# print(res)
+res = df.sort_values(["Generation", "Attack"], ascending=[
+                     True, True]).groupby("Generation").head(3)["Attack"].mean()
+print(res)
 
 # # 67
-# res = df.sort_values(["Generation", "Attack"], ascending=[
-#                      True, False]).groupby("Generation").head(5)["Attack"].mean()
-# print(res)
+res = df.sort_values(["Generation", "Attack"], ascending=[
+                     True, False]).groupby("Generation").head(5)["Attack"].mean()
+print(res)
 
 # # 68
-# res = df.groupby(["Type 1", "Type 2"],
-#                  as_index=False).size().sort_values("size", ascending=False).iloc[0]
-# print(res)
+res = df.groupby(["Type 1", "Type 2"]).size().sort_values(ascending=False)
+print(res.index[0])
 
 # # 69
-# res = df.groupby(["Type 1", "Type 2"], as_index=False).size()
-# res = res.loc[res["size"] == 1].reset_index(drop=True)
-# print(len(res))
+res = df.groupby(["Type 1", "Type 2"], as_index=False).size()
+res = res.loc[res["size"] == 1]
+print(len(res))
 
 # # 70
-# res = df.groupby(["Type 1", "Type 2"], as_index=False).size()
-# res = res.loc[res["size"] == 1]
-# df = pd.merge(res, df, on=["Type 1", "Type 2"], how="inner")
-# res = df.groupby("Generation")["size"].sum()
-# print(res)
+res = df.groupby(["Generation", "Type 1", "Type 2"], as_index=False).size()
+res1 = df.groupby(["Type 1", "Type 2"], as_index=False).size()
+res1 = res1.loc[res1["size"] == 1]
+res = pd.merge(res, res1, on=["Type 1", "Type 2"], how="inner")
+res = res.groupby("Generation").size()
+print(res)
+
 
 # # 71
-# df = pd.read_csv("../data/body.csv")
-# df.info()
-
-# res = df["수축기혈압(최고) : mmHg"] - df["이완기혈압(최저) : mmHg"]
-# res = res.mean()
-# print(res)
+df = pd.read_csv("../data/body.csv")
+df.info()
+res = df["수축기혈압(최고) : mmHg"] - df["이완기혈압(최저) : mmHg"]
+res = res.mean()
+print(res)
 
 # # 72
-# res = df.loc[df["측정나이"].between(50, 59)]["신장 : cm"].mean()
-# print(res)
+res = df.loc[(df["측정나이"] >= 50) & (df["측정나이"] < 60)]["신장 : cm"].mean()
+print(res)
 
 # # 73
-# df["연령대"] = df["측정나이"] // 10 * 10
-# res = df.groupby("연령대").size()
-# print(res)
+df["age"] = df["측정나이"].apply(lambda x: x//10 * 10)
+res = df.groupby("age").size()
+print(res)
 
 # # 74
-# res = df.groupby(["연령대", "등급"], as_index=False).size()
-# print(res)
+res = df.groupby(["age", "등급"]).size()
+print(res)
 
 # # 75
-# df.info()
-# M_A_mean = df.loc[(df["등급"] == "A") & (df["측정회원성별"] == "M")]["체지방율 : %"].mean()
-# M_D_mean = df.loc[(df["등급"] == "D") & (df["측정회원성별"] == "M")]["체지방율 : %"].mean()
-# if M_A_mean > M_D_mean:
-#     res = M_A_mean - M_D_mean
-# else:
-#     res = M_D_mean - M_A_mean
-# print(res)
+res = df.groupby(["측정회원성별", "등급"], as_index=False)["체지방율 : %"].mean()
+res = res.iloc[7, 2]-res.iloc[4, 2]
+print(res)
 
 # # 76
-# df.info()
-# F_A_mean = df.loc[(df["등급"] == "A") & (df["측정회원성별"] == "F")]["체중 : kg"].mean()
-# F_D_mean = df.loc[(df["등급"] == "D") & (df["측정회원성별"] == "F")]["체중 : kg"].mean()
-# if F_A_mean > F_D_mean:
-#     res = F_A_mean - F_D_mean
-# else:
-#     res = F_D_mean - F_A_mean
-# print(res)
+res = df.groupby(["측정회원성별", "등급"], as_index=False)["체중 : kg"].mean()
+res = res.iloc[3, 2]-res.iloc[0, 2]
+print(res)
 
 # # 77
-# df["bmi"] = df["체중 : kg"] / ((df["신장 : cm"]/100) ** 2)
-# res = df.loc[df["측정회원성별"] == "M"]["bmi"].mean()
-# print(res)
+df["bmi"] = df["체중 : kg"]/((df["신장 : cm"]/100)**2)
+res = df.loc[df["측정회원성별"] == "M"]["bmi"].mean()
+print(res)
 
 # # 78
-# res = df.loc[df["체지방율 : %"] >= df["bmi"]]["체중 : kg"].mean()
-# print(res)
+res = df.loc[df["체지방율 : %"] > df["bmi"]]["체중 : kg"].mean()
+print(res)
 
 # # 79
-# M = df.loc[df["측정회원성별"] == "M"]["악력D : kg"].mean()
-# F = df.loc[df["측정회원성별"] == "F"]["악력D : kg"].mean()
-# res = M - F
-# print(res)
+res = df.groupby("측정회원성별")["악력D : kg"].mean()
+res = res.iloc[1] - res.iloc[0]
+print(res)
 
 # # 80
-# M = df.loc[df["측정회원성별"] == "M"]["교차윗몸일으키기 : 회"].mean()
-# F = df.loc[df["측정회원성별"] == "F"]["교차윗몸일으키기 : 회"].mean()
-# res = M - F
-# print(res)
+res = df.groupby("측정회원성별")["교차윗몸일으키기 : 회"].mean()
+res = res.iloc[1] - res.iloc[0]
+print(res)
 
 # # 81
-# df = pd.read_csv("../data/weather2.csv")
-# df.info()
-# df["time"] = pd.to_datetime(df["time"])
-# df["month"] = df["time"].dt.month
-# df["hour"] = df["time"].dt.hour
-# res = df.loc[(df["month"].isin([6, 7, 8])) & (df["이화동기온"] > df["수영동기온"])]
-# print(len(res))
+df = pd.read_csv("../data/weather2.csv")
+df.info()
+df["time"] = pd.to_datetime(df["time"])
+res = df.loc[df["time"].dt.month.isin([6, 7, 8])]
+res = res.loc[res["이화동기온"] > res["수영동기온"]]
+print(len(res))
 
 # # 82
-# res = df.sort_values("이화동강수", ascending=False).iloc[0]
-# res1 = df.sort_values("수영동강수", ascending=False).iloc[0]
-# print(res, res1)
+res = df.sort_values("이화동강수", ascending=False)
+res = res.iloc[0, 0]
+res1 = df.sort_values("수영동강수", ascending=False)
+res1 = res1.iloc[0, 0]
+print(res, res1)
 
 # # 83
-# df = pd.read_csv("../data/customerInfo.csv")
-# df.info()
-# res = df.loc[df["Gender"] == "Male"].groupby(
-#     "Geography", as_index=False)["Exited"].sum()
-# res = res.sort_values("Exited", ascending=False)
-# print(res.iloc[0])
+df = pd.read_csv("../data/customerInfo.csv")
+df.info()
+res = df.loc[df["Gender"] == "Male"].groupby(
+    "Geography", as_index=False)["Exited"].sum().sort_values("Exited", ascending=False).iloc[0]
+print(res)
 
 # # 84
-# res = df.loc[(df["HasCrCard"] == 1) & (
-#     df["IsActiveMember"] == 1)]["Age"].mean()
-# print("%.4f" % res)
+res = df.loc[(df["IsActiveMember"] == 1) & (
+    df["HasCrCard"] == 1)]["Age"].mean()
+print("%.4f" % res)
 
 # # 85
-# res = df.loc[df["Balance"] >= df["Balance"].median()]["CreditScore"].std()
-# print("%.3f" % res)
+res = df.loc[df["Balance"] >= df["Balance"].median()]["CreditScore"].std()
+print("%.3f" % res)
 
 # # 86
-# df = pd.read_csv("../data/adult_health_2018.csv")
-# df.info()
-# df["혈압차"] = df["수축기혈압"] - df["이완기혈압"]
-# res = df.groupby("연령대코드(5세단위)", as_index=False)["혈압차"].var()
-# res = res.rename(columns={"혈압차": "분산"})
-# res = res.sort_values("분산", ascending=False).iloc[4]
-# print(res)
+df = pd.read_csv("../data/adult_health_2018.csv")
+df.info()
+df["혈압차"] = df["수축기혈압"] - df["이완기혈압"]
+res = df.groupby("연령대코드(5세단위)")["혈압차"].var().sort_values(ascending=False)
+print(res.index[4])
 
 # # 87
-# df["비만도"] = df["허리둘레"]/df["신장(5Cm단위)"]
-# df["비만"] = 0
-# df.loc[df["비만도"] >= 0.58, "비만"] = 1
-# print(df[["비만도", "비만"]])
-# ratio = df.loc[df["성별코드"] == "M"]["비만"].sum()/df.loc[df["성별코드"]
-#                                                      == "F"]["비만"].sum()
-# print(ratio)
+df["비만도"] = df["허리둘레"] / df["신장(5Cm단위)"]
+res = df.loc[df["비만도"] >= 0.58].groupby("성별코드").size()
+res = res.loc["M"]/res.loc["F"]
+print(res)
 
 # # 88
-# df = pd.read_csv("../data/carInsurance.csv")
-# df.info()
-# res = df.loc[df["Vehicle_Age"].str.contains("> 2")]
-# res = res.loc[res["Annual_Premium"] >= df["Annual_Premium"].median()]
-# res = res["Vintage"].mean()
-# print(res)
+df = pd.read_csv("../data/carInsurance.csv")
+df.info()
+res = df.loc[df["Vehicle_Age"] == "> 2 Years"]
+res = res.loc[res["Annual_Premium"] >=
+              df["Annual_Premium"].median()]["Vintage"].mean()
+print(res)
 
 # # 89
-# res = df.pivot_table(values="Annual_Premium",
-#                      index="Vehicle_Age", columns="Gender", aggfunc="mean")
-# print(res)
+# res = df.groupby(["Vehicle_Age", "Gender"])["Annual_Premium"].mean()
+# res = res.unstack()
+res = df.pivot_table(values="Annual_Premium",
+                     index="Vehicle_Age", columns="Gender", aggfunc="mean")
+print(res)
 
 # # 90
-# df = pd.read_csv("../data/mobilePhone.csv")
-# df.info()
-# res = df.groupby(["price_range", "n_cores"], as_index=False).size()
-# res = res.sort_values(["price_range", "size"], ascending=[True, False])
-# res = res.groupby("price_range").head(1).reset_index(drop=True)
-# print(res)
+df = pd.read_csv("../data/mobilePhone.csv")
+df.info()
+res = df.groupby(["price_range", "n_cores"], as_index=False).size()
+res = res.sort_values(["price_range", "size"], ascending=[
+                      False, False]).drop_duplicates("price_range")
+print(res)
 
 # # 91
-# res = df.loc[df["price_range"] == 3]
-# res = res.corr().unstack().reset_index()
-# res = res.rename(columns={0: "corr"})
-# res = res.loc[res["level_0"] != res["level_1"]]
-# res = res.loc[res["level_0"] < res["level_1"]]
-# res = res.sort_values("corr",
-#                       ascending=False)
-# print(res.iloc[1])
+res = df.loc[df["price_range"] == 3]
+res = res.corr().unstack().reset_index(name="corr")
+res = res.loc[(res["level_0"] != res["level_1"])
+              & (res["level_0"] > res["level_1"])]
+res = res.sort_values("corr", ascending=False)
+print(res.iloc[1])
+
 
 # # 92
-# df = pd.read_csv("../data/airlineSatisfaction.csv")
-# df.info()
-# res = df.loc[(df["Arrival Delay in Minutes"].isna())]
-# res = res.groupby(["Class", "satisfaction"]).size().unstack()
-# res = res.loc[res["neutral or dissatisfied"] < res["satisfied"]]
-# print(res)
+df = pd.read_csv("../data/airlineSatisfaction.csv")
+df.info()
+res = df.loc[df["Arrival Delay in Minutes"].isna()]
+res = res.groupby(["Class", "satisfaction"]).size().unstack()
+res = res.loc[res["satisfied"] > res["neutral or dissatisfied"]]
+print(res)
 
 # # 93
-# df = pd.read_csv("../data/waterPotability.csv")
-# df.info()
-# res = df.dropna(subset="ph")
-# Q1 = res["ph"].quantile(0.25)
-# res = res.loc[res["ph"] <= Q1]["ph"].mean()
-# print(res)
+df = pd.read_csv("../data/waterPotability.csv")
+df.info()
+res = df.loc[~df["ph"].isna()]
+res = res.loc[res["ph"] <= res["ph"].quantile(0.25)].mean()
+print(res["ph"])
 
 # # 94
-# df = pd.read_csv("../data/medicalCost.csv")
-# df.info()
-# Q4_y = df.loc[df["smoker"] == "yes"]["charges"].quantile(0.90)
-# Q4_n = df.loc[df["smoker"] == "no"]["charges"].quantile(0.90)
-# mean_y = df.loc[(df["smoker"] == "yes") & (
-#     df["charges"] >= Q4_y)]["charges"].mean()
-# mean_n = df.loc[(df["smoker"] == "no") & (
-#     df["charges"] >= Q4_n)]["charges"].mean()
-# res = mean_y - mean_n
-# print(res)
+df = pd.read_csv("../data/medicalCost.csv")
+df.info()
+smoker = df.loc[df["smoker"] == "yes"]
+non_smoker = df.loc[df["smoker"] == "no"]
+smoker = smoker.loc[smoker["charges"] >=
+                    smoker["charges"].quantile(0.9)]["charges"].mean()
+non_smoker = non_smoker.loc[non_smoker["charges"]
+                            >= non_smoker["charges"].quantile(0.9)]["charges"].mean()
+res = smoker - non_smoker
+print(res)
 
 # # 95
-# df = pd.read_csv("../data/kingcountyPrice.csv")
-# df.info()
-# res = df.groupby("bedrooms", as_index=False).size()
-# res_up = df.loc[df["bedrooms"] == 3]["price"].quantile(0.9)
-# res_un = df.loc[df["bedrooms"] == 3]["price"].quantile(0.1)
-# res = res_up - res_un
-# print(res)
+df = pd.read_csv("../data/kingcountyPrice.csv")
+df.info()
+res = df.groupby("bedrooms").size().sort_values(ascending=False)
+print(res)
+res = df.loc[df["bedrooms"] == 3]
+res2 = res["price"].quantile(0.9)
+res1 = res["price"].quantile(0.1)
+res = res2 - res1
+print(res)
 
 # # 96 unsolved
 # df = pd.read_csv("../data/admission.csv")
@@ -650,99 +630,94 @@ df.info()
 # df.info()
 
 # # 98
-# df = pd.read_csv("../data/drug.csv")
-# df.info()
-# df["Age2"] = df["Age"].apply(lambda x: x//10 * 10)
-# res = df.loc[df["Sex"] == "M"].groupby("Age2")["Na_to_K"].mean()
-# print(res)
+df = pd.read_csv("../data/drug.csv")
+df.info()
+df["Age2"] = df["Age"].apply(lambda x: x//10 * 10)
+res = df.loc[df["Sex"] == "M"]
+res = res.groupby("Age2")["Na_to_K"].mean()
+print(res)
 
 # # 99
-# df = pd.read_csv("../data/audit.csv")
-# df.info()
-# res = df.groupby("Risk").mean(numeric_only=True)[["Score_A", "Score_B"]]
-# print(res)
+df = pd.read_csv("../data/audit.csv")
+df.info()
+res = df.groupby("Risk").mean(numeric_only=True)[["Score_A", "Score_B"]]
+print(res)
 
 # # 100
-# df = pd.read_csv("../data/motion.csv")
-# df.info()
-# res0 = df.loc[df["pose"] == 0].median()
-# res1 = df.loc[df["pose"] == 1].median()
-# res = res1 - res0
-# res = res.abs().sort_values(ascending=False)
-# print(res)
+df = pd.read_csv("../data/motion.csv")
+df.info()
+res = df.groupby("pose").median()
+res = (res.iloc[0] - res.iloc[1]).abs()
+res = res.sort_values(ascending=False)
+print(res)
 
-# # 101 unsolved
-# df = pd.read_csv("../data/hyundai.csv")
-# df.info()
-# df["size"] = df.groupby("model").transform("size")
-# res = df.sort_values("size", ascending=False).groupby("model").head(3)
-# print(res)
+# # 101
+df = pd.read_csv("../data/hyundai.csv")
+df.info()
+res = df.groupby("model").size().sort_values(ascending=False)
+res = res.index[0:3].tolist()
+ans = df.loc[df["model"].isin(res)].groupby("model")["price"].mean()
+print(ans)
 
 # # 102
-# df = pd.read_csv("../data/diabetes.csv")
-# df.info()
-# res0 = df.loc[df["Outcome"] == 0].mean()
-# res1 = df.loc[df["Outcome"] == 1].mean()
-# res = res1 - res0
-# print(res)
+df = pd.read_csv("../data/diabetes.csv")
+df.info()
+res = df.groupby('Outcome').mean().diff().iloc[1, :]
+print(res)
 
 # # 103
-# df = pd.read_csv("../data/NFLX.csv")
-# df.info()
-# df["Date"] = pd.to_datetime(df["Date"])
-# res = df.loc[df["Date"].dt.month == 5]
-# res = res.groupby(df["Date"].dt.year)["Open"].mean()
-# print(res)
+df = pd.read_csv("../data/NFLX.csv")
+df.info()
+df["Date"] = pd.to_datetime(df["Date"])
+res = df.loc[df["Date"].dt.month == 5]
+res = res.groupby(df["Date"].dt.year)["Open"].mean()
+print(res)
 
 # # 104
-# df = pd.read_csv("../data/nba.csv", encoding='latin', sep=';')
-# df.info()
-# res = df.loc[df["Tm"] == "TOR"]["Age"].mean()
-# print("%.4f" % res)
+df = pd.read_csv("../data/nba.csv", encoding='latin', sep=';')
+df.info()
+res = df.loc[df["Tm"] == "TOR"]["Age"].mean()
+print("%.4f" % res)
 
 # # 105
-# res = df.loc[df["Age"] == df["Age"].min()]
-# res = res.groupby("Pos", as_index=False).size(
-# ).sort_values("size", ascending=False)
-# print(res.iloc[0])
+res = df.loc[df["Age"] == df["Age"].min()]
+res = res.groupby("Pos").size().sort_values(ascending=False).index[0]
+print(res)
 
 # # 106
-# df["first_name"] = df["Player"].apply(lambda x: x.split(" ")[0])
-# res = df.groupby("first_name", as_index=False).size(
-# ).sort_values("size", ascending=False)
-# print(res.iloc[0])
+df.info()
+df["FirstName"] = df["Player"].apply(lambda x: x.split(" ")[0])
+res = df.groupby("FirstName").size().sort_values(ascending=False)
+print(res.iloc[0])
 
 # # 107
-# res = df.groupby("Pos")["PTS"].mean().sort_values(ascending=True)
-# print(res)
+res = df.groupby("Pos")["PTS"].mean()
+print(res)
 
 # # 108 == 107 duplicated
 
 # # 109
-# res = df.groupby("Tm")["G"].max()
-# res = res.mean()
-# print(res)
+res = df.sort_values(["Tm", "G"], ascending=[
+                     True, False]).drop_duplicates("Tm", keep="first")["G"].mean()
+print(res)
 
 # # 110
-# res = df.loc[(df["Pos"].isin(["C", "PF"])) & (df["Tm"] == "MIA")]["MP"].mean()
-# print(res)
+res = df.loc[(df["Tm"] == "MIA") & (df["Pos"].isin(["C", "PF"]))]["MP"].mean()
+print(res)
 
 # # 111
-# res = df["G"].mean() * 1.5
-# res = df.loc[df["G"] >= res]["3P"].mean()
-# print(res)
+res = df.loc[df["G"] >= df["G"].mean() * 1.5]["3P"].mean()
+print(res)
 
 # # 112
-# res_over = df.loc[df["Age"] >= df["Age"].mean()]["G"].mean()
-# res_under = df.loc[df["Age"] < df["Age"].mean()]["G"].mean()
-# res = res_over - res_under
-# print(res)
-
+res = df.loc[df["Age"] >= df["Age"].mean()]["G"].mean()
+res1 = df.loc[df["Age"] < df["Age"].mean()]["G"].mean()
+res = res - res1
+print(res)
 # # 113
-# res = df.groupby("Tm", as_index=False)[
-#     "Age"].mean().sort_values("Age", ascending=True).iloc[0, 0]
-# print(res)
+res = df.groupby("Tm")["Age"].mean().sort_values().index[0]
+print(res)
 
 # # 114
-# res = df.groupby("Pos")["MP"].mean()
-# print(res)
+res = df.groupby("Pos")["MP"].mean()
+print(res)
