@@ -1,36 +1,42 @@
+from sklearn.metrics import roc_auc_score, accuracy_score, mean_squared_error
+from sklearn.preprocessing import StandardScaler
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
-# Load the dataset
-df = pd.read_csv("admission.csv")
+df = pd.read_csv("../data/admission.csv")
+df.info()
 
-# Drop the Serial No. column
-df = df.drop(columns=["Serial No."])
+x_train = df.drop(columns=["Serial No.", "TOEFL Score"])
+y_train = df["TOEFL Score"]
+x_test = df.drop(columns=["Serial No.", "TOEFL Score"])
 
-# Separate independent variables (X) and dependent variable (y)
-X = df.drop(columns=["Chance of Admit"])
-y = df["Chance of Admit"]
+scaler = StandardScaler()
 
-# Split the data into training and testing sets (optional but recommended)
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42)
+num_columns = x_train.select_dtypes(exclude="object").columns
+x_train[num_columns] = scaler.fit_transform(x_train[num_columns])
+x_test[num_columns] = scaler.transform(x_test[num_columns])
 
-# Train a Random Forest Regressor
-model = RandomForestRegressor(random_state=42)
-model.fit(X_train, y_train)
+encoder = LabelEncoder()
+x_train["Chance of Admit"] = encoder.fit_transform(x_train["Chance of Admit"])
+x_test["Chance of Admit"] = encoder.transform(x_test["Chance of Admit"])
 
-# Extract feature importances
-feature_importances = model.feature_importances_
+x_train, x_val, y_train, y_val = train_test_split(
+    x_train, y_train, test_size=0.2, random_state=42)
 
-# Create a DataFrame to display feature importance
-importance_df = pd.DataFrame({
-    "Feature": X.columns,
-    "Importance": feature_importances
-}).sort_values(by="Importance", ascending=False)
+model = RandomForestRegressor()
+model.fit(x_train, y_train)
+y_val_pred = model.predict(x_val)
 
-# Display feature importance
-print(importance_df)
+msa = mean_squared_error(y_val, y_val_pred)
+print(msa)
+
+x_test_pred = model.predict(x_test)
+result = pd.DataFrame(x_test_pred, columns=["pred"])
+result.to_csv("result.csv", index=False)
+res = pd.read_csv("result.csv")
+print(res, y_train)
 
 # # 96 unsolved
 # df = pd.read_csv("../data/admission.csv")
