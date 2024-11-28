@@ -1,3 +1,4 @@
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 import pandas as pd
 
@@ -147,3 +148,38 @@ print(df)
 res = df.groupby([df["년월"].dt.year, df["년월"].dt.month])["총범죄자수"].mean()
 res = df.groupby(df["년월"].dt.year)["총범죄자수"].mean().sort_values(ascending=False)
 print(res.iloc[0])
+
+# 제 7회 빅분기 기출 작업형1 1번
+df = pd.read_csv("../data/PQ7_p1_q1.csv")
+df.info()
+res = df.groupby("학생").count().T
+res["cnt"] = res.iloc[:, :].sum(axis=1)
+res = res.sort_values("cnt", ascending=False)
+df["국어_표준화"] = (df["국어"] - df["국어"].mean())/df["국어"].std(ddof=0)
+res = df["국어_표준화"].sort_values(ascending=False).iloc[0]
+
+print(res)
+
+# 제 7회 빅분기 기출 작업형1 2번
+df = pd.read_csv("../data/PQ7_p1_q2.csv")
+df.info()
+res = df.corr().unstack().reset_index(name="corr")
+res = res.loc[res["level_0"] == "var_11"]
+res["corr"] = res["corr"].abs()
+res = res.sort_values("corr", ascending=False)
+print(df["var_44"].mean())
+
+max_v = df.corr()['var_11'].abs().sort_values().index[-2]
+r = df[max_v].mean()
+print(r)
+
+# 제 7회 빅분기 기출 작업형1 3번
+df = pd.read_csv("../data/PQ7_p1_q3.csv")
+df.info()
+Q1 = df["var_6"].quantile(0.25)
+Q3 = df["var_6"].quantile(0.75)
+IQR = Q3 - Q1
+Q1_out = Q1 - IQR * 1.5
+Q3_out = Q3 + IQR * 1.5
+res = df["var_6"][(df["var_6"] < Q1_out) | (df["var_6"] > Q3_out)]
+print(len(res))
